@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="max-w-md mx-auto my-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-    <!-- Header -->
+    <!-- Header with Logo -->
     <div class="bg-brand-600 p-6 text-center text-white">
-        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-2 border border-white/20">
-            <i class="fa-solid fa-right-to-bracket text-brand-accent"></i>
+        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center p-1.5 mx-auto mb-3 shadow-lg ring-2 ring-brand-accent/30">
+            <img src="{% static 'images/logo.png' %}" alt="College Logo" class="w-full h-full object-contain">
         </div>
         <h2 class="text-2xl font-black tracking-tight">Portal Login</h2>
         <p class="text-brand-100 text-xs mt-1 font-medium">Vishwabharti College Event & Attendance System</p>

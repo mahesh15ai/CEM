@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en" class="min-h-screen bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -35,11 +35,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="h-full font-sans antialiased text-slate-800 flex flex-col md:flex-row overflow-hidden">
+<body class="min-h-screen font-sans antialiased text-slate-800 flex flex-col md:flex-row bg-slate-50">
 
     {% if user.is_authenticated %}
     <!-- Mobile Navigation Bar -->
-    <div class="md:hidden bg-brand-700 text-white p-4 flex items-center justify-between border-b border-brand-600 z-50">
+    <div class="md:hidden bg-brand-700 text-white p-4 flex items-center justify-between border-b border-brand-600 sticky top-0 z-50 shadow-md">
         <div class="flex items-center space-x-3">
             <div class="w-9 h-9 rounded-lg bg-white p-1 flex items-center justify-center shadow flex-shrink-0">
                 <img src="{% static 'images/logo.png' %}" alt="College Logo" class="w-full h-full object-contain">
@@ -54,7 +54,7 @@
         </button>
     </div>
 
-    <!-- Sidebar Drawer -->
+    <!-- Sidebar Drawer (Responsive) -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out w-64 bg-brand-700 text-white flex flex-col justify-between flex-shrink-0 shadow-2xl z-40">
         <div>
             <!-- Brand Logo Header -->
@@ -71,27 +71,22 @@
             <!-- Navigation Links -->
             {% with current_url=request.resolver_match.url_name %}
             <nav class="p-3 space-y-1 text-sm font-medium">
-                
                 {% if user.is_superuser or user.is_staff or user.is_admin %}
-                <!-- Admin Only: Students Directory -->
                 <a href="{% url 'student_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_list' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-user-graduate w-5 {% if current_url == 'student_list' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Students Directory</span>
                 </a>
 
-                <!-- Admin Only: Register Student -->
                 <a href="{% url 'add_student' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'add_student' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-user-plus w-5 {% if current_url == 'add_student' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Register Student</span>
                 </a>
 
-                <!-- Admin Only: Attendance Management -->
                 <a href="{% url 'scan_attendance' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'scan_attendance' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-qrcode w-5 {% if current_url == 'scan_attendance' %}text-brand-600{% else %}text-amber-400{% endif %}"></i>
                     <span>Attendance Management</span>
                 </a>
                 {% else %}
-                <!-- Student Only: My Digital Pass -->
                 {% if user.student_profile %}
                 <a href="{% url 'student_pass' user.student_profile.id %}" target="_blank" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_pass' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-id-card w-5 text-amber-300"></i>
@@ -100,13 +95,11 @@
                 {% endif %}
                 {% endif %}
 
-                <!-- Events & Expo -->
                 <a href="{% url 'event_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'event_list' or current_url == 'create_event' or current_url == 'scan_event_pass' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-calendar-check w-5 {% if current_url == 'event_list' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Events & Expo</span>
                 </a>
 
-                <!-- Certificates -->
                 <a href="{% url 'certificate_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'certificate_list' or current_url == 'issue_certificate' or current_url == 'view_certificate' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-award w-5 {% if current_url == 'certificate_list' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Certificates</span>
@@ -127,15 +120,14 @@
         </div>
     </aside>
 
-    <!-- Overlay Backdrop for Mobile View -->
+    <!-- Overlay Backdrop -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden md:hidden"></div>
     {% endif %}
 
     <!-- Main Content Body -->
-    <div class="flex-grow flex flex-col h-full overflow-y-auto w-full">
+    <div class="flex-1 flex flex-col min-w-0 w-full">
         {% if user.is_authenticated %}
-        <!-- Desktop Header Top Bar -->
-        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between sticky top-0 z-20">
+        <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-sm">
             <div class="flex items-center space-x-3">
                 <h2 class="text-xs sm:text-sm font-bold text-slate-800">Welcome, <span class="text-brand-600">{{ user.first_name|default:user.username }}</span></h2>
             </div>
@@ -149,7 +141,6 @@
         </header>
         {% endif %}
 
-        <!-- Main Content Wrapper -->
         <main class="p-4 sm:p-6 lg:p-8 flex-grow w-full max-w-7xl mx-auto">
             {% if messages %}
                 {% for message in messages %}
@@ -164,7 +155,6 @@
         </main>
     </div>
 
-    <!-- Toggle Script for Mobile Responsive Sidebar -->
     <script>
         const toggleBtn = document.getElementById('mobile-menu-toggle');
         const sidebar = document.getElementById('sidebar');

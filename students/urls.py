@@ -6,4 +6,5 @@ urlpatterns = [
     path('add/', views.add_student, name='add_student'),
     path('bulk-add/', views.bulk_add_students, name='bulk_add_students'),
     path('pass/<int:student_id>/', views.student_pass, name='student_pass'),
+ 
 ]

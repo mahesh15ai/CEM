@@ -5,6 +5,7 @@ import base64
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponse
 from .models import StudentProfile
 
 @login_required
@@ -12,7 +13,7 @@ def student_list(request):
     is_admin = request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
     if not is_admin:
         messages.error(request, "Access denied. Admin permissions required.")
-        return redirect('dashboard')
+        return redirect('event_list')
 
     search_query = request.GET.get('search', '').strip()
     selected_course = request.GET.get('course', '').strip()
@@ -149,4 +150,35 @@ def student_pass(request, student_id):
         'student': student,
         'qr_b64': qr_b64,
     }
-    return render(request, 'students/student_pass.html', context)
+    # Render using 'students/idcard.html'
+    return render(request, 'students/id_card.html', context)
+
+
+@login_required
+def export_students_excel(request):
+    """ CSV export for students directory """
+    is_admin = request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
+    if not is_admin:
+        messages.error(request, "Access denied.")
+        return redirect('student_list')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="students_directory.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Student ID', 'First Name', 'Last Name', 'Email', 'Course', 'Year', 'Division', 'Roll Number'])
+
+    students = StudentProfile.objects.select_related('user').all()
+    for student in students:
+        writer.writerow([
+            student.student_id,
+            student.user.first_name,
+            student.user.last_name,
+            student.user.email,
+            student.course,
+            student.year,
+            student.division,
+            student.roll_number
+        ])
+
+    return response
