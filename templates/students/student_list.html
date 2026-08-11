@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Header & Action Controls -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-users text-brand-600"></i>
+                <span>Students Directory</span>
+            </h1>
+            <p class="text-xs text-slate-500 mt-0.5">Browse, search, and manage enrolled student profiles.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+            <a href="{% url 'bulk_add_students' %}" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-upload"></i>
+                <span>Bulk CSV Add</span>
+            </a>
+            <a href="{% url 'add_student' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition shadow-md flex items-center gap-1.5">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>+ Register Student</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Course Filters Bar -->
+    <form method="GET" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row gap-3">
+        <div class="flex-1 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+            <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Search student name, Student ID, or Email..." class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-500">
+        </div>
+        <div class="w-full md:w-56">
+            <select name="course" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="">-- All Courses --</option>
+                <option value="B.Sc Computer Science" {% if selected_course == 'B.Sc Computer Science' %}selected{% endif %}>B.Sc Computer Science</option>
+                <option value="B.C.A." {% if selected_course == 'B.C.A.' %}selected{% endif %}>B.C.A.</option>
+                <option value="B.Tech IT" {% if selected_course == 'B.Tech IT' %}selected{% endif %}>B.Tech IT</option>
+                <option value="B.Com" {% if selected_course == 'B.Com' %}selected{% endif %}>B.Com</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">Filter</button>
+    </form>
+
+    <!-- Students Directory Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-400 font-bold uppercase border-b border-slate-100">
+                        <th class="p-3.5 px-5">Student ID</th>
+                        <th class="p-3.5 px-5">Student Name</th>
+                        <th class="p-3.5 px-5">Course & Year</th>
+                        <th class="p-3.5 px-5">Division / Roll</th>
+                        <th class="p-3.5 px-5 text-right">Digital Pass</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for student in students %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3.5 px-5 font-mono font-bold text-brand-600">{{ student.student_id }}</td>
+                        <td class="p-3.5 px-5">
+                            <div class="font-bold text-slate-800">{{ student.user.get_full_name }}</div>
+                            <div class="text-[10px] text-slate-400">{{ student.user.email }}</div>
+                        </td>
+                        <td class="p-3.5 px-5 font-medium text-slate-600">{{ student.course }} ({{ student.year }})</td>
+                        <td class="p-3.5 px-5 text-slate-500 font-medium">Div {{ student.division }} - Roll {{ student.roll_number }}</td>
+                        <td class="p-3.5 px-5 text-right">
+                            <a href="{% url 'student_pass' student.id %}" target="_blank" class="inline-flex items-center gap-1 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-1.5 rounded-lg border border-brand-100 transition text-[11px]">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>QR Pass</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400">No students found matching your criteria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

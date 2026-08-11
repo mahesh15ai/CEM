@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Top Header Banner -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-900">Admin Control Center</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Overview of students, events, registrations, and System Analytics.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{% url 'add_student' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Register Student</span>
+            </a>
+            <a href="{% url 'scan_attendance' %}" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-qrcode text-amber-400"></i>
+                <span>Scan Attendance</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Analytics Counter Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-slate-400 uppercase">Total Students</span>
+                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ total_students }}</h3>
+            </div>
+            <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-slate-400 uppercase">Total Events</span>
+                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ total_events }}</h3>
+            </div>
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-calendar-star"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-slate-400 uppercase">Event Entries</span>
+                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ total_registrations }}</h3>
+            </div>
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-ticket"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-slate-400 uppercase">Certificates</span>
+                <h3 class="text-2xl font-black text-slate-900 mt-1">{{ total_certificates }}</h3>
+            </div>
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-award"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Registered Students Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-extrabold text-slate-900 text-sm">Recently Registered Students</h3>
+            <a href="{% url 'student_list' %}" class="text-xs text-brand-600 font-bold hover:underline">View All Students →</a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-400 font-bold uppercase border-b border-slate-100">
+                        <th class="p-3.5 px-5">Student ID</th>
+                        <th class="p-3.5 px-5">Name</th>
+                        <th class="p-3.5 px-5">Course</th>
+                        <th class="p-3.5 px-5 text-center">ID Pass</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for student in recent_students %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3.5 px-5 font-mono font-bold text-brand-600">{{ student.student_id }}</td>
+                        <td class="p-3.5 px-5 font-bold text-slate-800">{{ student.user.get_full_name }}</td>
+                        <td class="p-3.5 px-5 text-slate-600">{{ student.course }} ({{ student.year }})</td>
+                        <td class="p-3.5 px-5 text-center">
+                            <!-- Updated URL from 'id_card' to 'student_id_card' -->
+                            <a href="{% url 'student_id_card' student.student_id %}" target="_blank" class="inline-flex items-center space-x-1 bg-brand-50 text-brand-700 font-bold px-2.5 py-1 rounded-lg text-[10px] hover:bg-brand-600 hover:text-white transition">
+                                <i class="fa-solid fa-id-card"></i>
+                                <span>Pass</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="p-6 text-center text-slate-400">No students registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

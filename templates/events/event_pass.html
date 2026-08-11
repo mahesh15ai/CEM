@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto space-y-4 my-6">
+    
+    <!-- Printable Pass Card -->
+    <div id="printable-pass" class="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-brand-600/30 relative">
+        
+        <!-- Header Ribbon -->
+        <div class="bg-brand-600 p-5 text-white text-center relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+            <span class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/20 px-3 py-1 rounded-full">
+                Official Event Entry Pass
+            </span>
+            <h2 class="text-xl font-black mt-2 leading-tight">{{ event.title }}</h2>
+            <p class="text-xs text-brand-100 font-medium mt-0.5">Vishwabharti Mahavidyalaya Event Portal</p>
+        </div>
+
+        <!-- Pass Details -->
+        <div class="p-6 space-y-5">
+            
+            <!-- Student Information -->
+            <div class="flex items-center space-x-4 bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                <div class="w-14 h-14 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-black text-xl shadow-inner border border-brand-100 overflow-hidden flex-shrink-0">
+                    {% if student.photo %}
+                        <img src="{{ student.photo.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ student.user.first_name|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <div class="overflow-hidden">
+                    <h3 class="font-extrabold text-slate-900 text-sm truncate">{{ student.user.get_full_name }}</h3>
+                    <p class="text-[11px] font-mono text-brand-600 font-bold mt-0.5">ID: {{ student.student_id }}</p>
+                    <p class="text-[10px] text-slate-500 font-medium">{{ student.course }} ({{ student.year }})</p>
+                </div>
+            </div>
+
+            <!-- Event Time & Venue -->
+            <div class="grid grid-cols-2 gap-3 text-xs font-semibold">
+                <div class="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
+                    <span class="text-[9px] text-slate-400 block font-bold uppercase">Date & Time</span>
+                    <span class="text-slate-800 font-bold block mt-0.5">{{ event.event_date|date:"M d, Y" }}</span>
+                    <span class="text-brand-600 text-[10px] font-bold block">{{ event.event_time|time:"h:i A" }}</span>
+                </div>
+                <div class="p-3 bg-brand-50/50 rounded-xl border border-brand-100">
+                    <span class="text-[9px] text-slate-400 block font-bold uppercase">Venue</span>
+                    <span class="text-slate-800 font-bold block mt-0.5 line-clamp-2">{{ event.venue }}</span>
+                </div>
+            </div>
+
+            <!-- Dynamic QR Code -->
+            <div class="text-center bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-200">
+                <img src="data:image/png;base64,{{ qr_b64 }}" alt="Event Entry QR" class="w-36 h-36 mx-auto rounded-lg shadow-sm border">
+                <span class="text-[10px] font-bold text-slate-400 block mt-2">Scan at Event Gate for Authorized Entry</span>
+            </div>
+
+            <div class="text-center pt-2 border-t border-slate-100">
+                <span class="text-[9px] font-mono text-slate-400 font-semibold">Pass Ref: EVT-{{ event.id }}-{{ student.student_id }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-3">
+        <button onclick="window.print()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+            <i class="fa-solid fa-print"></i>
+            <span>Print Pass</span>
+        </button>
+        <a href="{% url 'event_list' %}" class="px-5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center">
+            Back
+        </a>
+    </div>
+
+</div>
+{% endblock %}

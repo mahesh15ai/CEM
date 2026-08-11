@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+        <div class="border-b pb-4 mb-5">
+            <h1 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-file-csv text-brand-600"></i>
+                <span>Bulk Register Students via CSV</span>
+            </h1>
+            <p class="text-xs text-slate-500 mt-0.5">Upload a CSV file to add 10, 50, or 100 students at once.</p>
+        </div>
+
+        <!-- Sample Format Table -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+            <span class="text-xs font-bold text-slate-700 block mb-2">CSV Format Example (Columns in Order):</span>
+            <div class="overflow-x-auto">
+                <code class="text-[11px] text-brand-700 bg-white p-2 rounded block border font-mono">
+                    First_Name, Last_Name, Email, Course, Year, Division, Roll_Number<br>
+                    Aarav, Deshmukh, aarav@gmail.com, B.Sc Computer Science, FY, A, 101<br>
+                    Ananya, Kulkarni, ananya@gmail.com, B.Sc Computer Science, FY, A, 102
+                </code>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2">* Default Password for bulk created accounts: <strong class="text-slate-600">Password@123</strong></p>
+        </div>
+
+        <!-- Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Select CSV File</label>
+                <input type="file" name="csv_file" accept=".csv" required class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 text-xs">
+            </div>
+
+            <div class="flex gap-3">
+                <button type="submit" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Upload & Register Students</span>
+                </button>
+                <a href="{% url 'student_list' %}" class="px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

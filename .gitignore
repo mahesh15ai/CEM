@@ -1,0 +1,19 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Database & Secret files
+*.sqlite3
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE & Editor files
+.vscode/
+.idea/
+
+# Media Uploads
+/media/

@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Print CSS to force Landscape Mode while Printing -->
+<style>
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        body {
+            background: white !important;
+        }
+        body * {
+            visibility: hidden;
+        }
+        #printable-certificate, #printable-certificate * {
+            visibility: visible;
+        }
+        #printable-certificate {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            border-width: 14px !important;
+            border-color: #5C061C !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 2.5rem !important;
+            background: #ffffff !important;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="max-w-5xl mx-auto space-y-5 my-6">
+    
+    <!-- Premium Horizontal Landscape Certificate Frame -->
+    <div id="printable-certificate" class="bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 p-8 sm:p-12 rounded-3xl shadow-2xl border-[12px] border-brand-600 relative overflow-hidden text-center flex flex-col justify-between min-h-[600px]">
+        
+        <!-- Background Decorative Elements -->
+        <div class="absolute inset-3 border-2 border-brand-accent/80 pointer-events-none rounded-2xl"></div>
+        <div class="absolute inset-5 border border-brand-accent/30 pointer-events-none rounded-xl"></div>
+        
+        <!-- Corner Ornaments -->
+        <div class="absolute top-6 left-6 w-8 h-8 border-t-4 border-l-4 border-brand-accent rounded-tl-lg pointer-events-none"></div>
+        <div class="absolute top-6 right-6 w-8 h-8 border-t-4 border-r-4 border-brand-accent rounded-tr-lg pointer-events-none"></div>
+        <div class="absolute bottom-6 left-6 w-8 h-8 border-b-4 border-l-4 border-brand-accent rounded-bl-lg pointer-events-none"></div>
+        <div class="absolute bottom-6 right-6 w-8 h-8 border-b-4 border-r-4 border-brand-accent rounded-br-lg pointer-events-none"></div>
+
+        <!-- Header: Logo & College Information -->
+        <div class="space-y-2 relative z-10 pt-2">
+            <div class="flex items-center justify-center gap-5">
+                <!-- College Logo -->
+                <div class="w-20 h-20 bg-white p-1.5 rounded-2xl shadow-lg border-2 border-brand-accent flex items-center justify-center flex-shrink-0">
+                    <img src="{% static 'images/logo.png' %}" alt="College Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="text-left">
+                    <h1 class="text-2xl sm:text-4xl font-black text-brand-700 uppercase tracking-widest leading-tight drop-shadow-sm">Vishwabharti Mahavidyalaya</h1>
+                    <p class="text-xs text-slate-600 font-bold uppercase tracking-wider mt-1 flex items-center gap-2">
+                        <span>CIDCO, Nanded - 431606</span>
+                        <span class="text-brand-accent">•</span>
+                        <span>Autonomous Institution</span>
+                    </p>
+                </div>
+            </div>
+            <div class="w-48 h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent mx-auto rounded-full mt-3"></div>
+        </div>
+
+        <!-- Certificate Title -->
+        <div class="my-3 relative z-10">
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent bg-brand-700/5 px-4 py-1 rounded-full border border-brand-accent/20">Official Document</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-black text-slate-900 uppercase tracking-wider italic mt-2">Certificate of {{ cert.certificate_type }}</h2>
+        </div>
+
+        <!-- Certificate Body Message -->
+        <div class="space-y-3 max-w-3xl mx-auto text-slate-800 text-sm leading-relaxed relative z-10">
+            <p class="font-serif italic text-base text-slate-500">This is to proudly certify that</p>
+            
+            <h3 class="text-2xl sm:text-3xl font-black text-brand-600 tracking-wide underline underline-offset-8 decoration-brand-accent/80">
+                {{ cert.student.user.get_full_name }}
+            </h3>
+            
+            <p class="font-medium text-slate-600 text-xs sm:text-sm pt-1">
+                Student ID: <strong class="font-mono text-slate-900 bg-slate-100 px-2 py-0.5 rounded">{{ cert.student.student_id }}</strong> &nbsp;|&nbsp; 
+                Course: <strong class="text-slate-900">{{ cert.student.course }} ({{ cert.student.year }})</strong>
+            </p>
+            
+            <p class="pt-1 font-serif italic text-slate-600 text-xs sm:text-sm">has successfully been awarded this certificate for</p>
+            
+            <div class="inline-block bg-gradient-to-r from-amber-100/80 via-amber-50 to-amber-100/80 px-8 py-2.5 rounded-2xl border-2 border-brand-accent/40 shadow-sm">
+                <span class="font-black text-slate-900 text-base sm:text-xl">{{ cert.title }}</span>
+            </div>
+            
+            {% if cert.description %}
+                <p class="text-xs text-slate-500 italic max-w-2xl mx-auto mt-1 leading-snug">{{ cert.description }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Footer Section: Issue Date, Verification QR, Official Medal & Authorized Signatory -->
+        <div class="pt-6 grid grid-cols-4 items-end text-xs font-bold text-slate-700 relative z-10 border-t border-slate-200/80 mt-4">
+            
+            <!-- Column 1: Issue Date & Ref ID -->
+            <div class="text-left space-y-1">
+                <p class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Date of Issue</p>
+                <p class="font-mono text-slate-900 font-bold text-xs">{{ cert.issue_date|date:"F d, Y" }}</p>
+                <p class="text-[9px] font-mono text-slate-400 pt-1">Ref ID: <strong class="text-brand-700">{{ cert.certificate_id }}</strong></p>
+            </div>
+
+            <!-- Column 2: Official Gold Seal Badge -->
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-600 p-0.5 shadow-md flex items-center justify-center">
+                    <div class="w-full h-full rounded-full border-2 border-dashed border-amber-900/40 flex flex-col items-center justify-center text-amber-950 p-1">
+                        <i class="fa-solid fa-ribbon text-lg"></i>
+                        <span class="text-[7px] font-black uppercase tracking-tighter leading-none mt-0.5">OFFICIAL SEAL</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Verification QR Code -->
+            <div class="text-center">
+                <img src="data:image/png;base64,{{ qr_b64 }}" class="w-20 h-20 mx-auto border-2 border-brand-600 p-1 bg-white rounded-xl shadow-sm">
+                <span class="text-[8px] font-mono text-slate-400 block mt-1 uppercase tracking-tight">Scan to Verify</span>
+            </div>
+
+            <!-- Column 4: Signature -->
+            <div class="text-right space-y-1">
+                <div class="h-8 border-b-2 border-slate-800 w-36 ml-auto"></div>
+                <p class="font-bold text-slate-900 text-xs">Authorized Signatory</p>
+                <p class="text-[10px] text-slate-400 font-normal">Principal / Controller of Exams</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-3 no-print">
+        <button onclick="window.print()" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-3.5 rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2">
+            <i class="fa-solid fa-print"></i>
+            <span>Print / Download Premium Horizontal Certificate</span>
+        </button>
+        <a href="{% url 'certificate_list' %}" class="px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3.5 rounded-xl text-xs transition flex items-center justify-center">
+            Back
+        </a>
+    </div>
+
+</div>
+{% endblock %}

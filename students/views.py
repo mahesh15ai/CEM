@@ -1,0 +1,152 @@
+import csv
+import qrcode
+import io
+import base64
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import StudentProfile
+
+@login_required
+def student_list(request):
+    is_admin = request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
+    if not is_admin:
+        messages.error(request, "Access denied. Admin permissions required.")
+        return redirect('dashboard')
+
+    search_query = request.GET.get('search', '').strip()
+    selected_course = request.GET.get('course', '').strip()
+
+    students = StudentProfile.objects.select_related('user').all()
+
+    if search_query:
+        students = students.filter(
+            user__first_name__icontains=search_query
+        ) | students.filter(
+            user__last_name__icontains=search_query
+        ) | students.filter(
+            student_id__icontains=search_query
+        ) | students.filter(
+            user__email__icontains=search_query
+        )
+
+    if selected_course:
+        students = students.filter(course=selected_course)
+
+    context = {
+        'students': students,
+        'search_query': search_query,
+        'selected_course': selected_course,
+    }
+    return render(request, 'students/student_list.html', context)
+
+
+@login_required
+def add_student(request):
+    is_admin = request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
+    if not is_admin:
+        messages.error(request, "Access denied.")
+        return redirect('student_list')
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        course = request.POST.get('course')
+        year = request.POST.get('year')
+        division = request.POST.get('division')
+        roll_number = request.POST.get('roll_number')
+        phone_number = request.POST.get('phone_number')
+
+        from accounts.models import User
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "A user with this email already exists.")
+            return redirect('add_student')
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password="Password@123",
+            first_name=first_name,
+            last_name=last_name,
+            role="STUDENT"
+        )
+
+        student = StudentProfile.objects.create(
+            user=user,
+            course=course,
+            year=year,
+            division=division,
+            roll_number=roll_number,
+            phone_number=phone_number
+        )
+
+        messages.success(request, f"🎓 Student {user.get_full_name()} registered successfully! ID: {student.student_id}")
+        return redirect('student_list')
+
+    return render(request, 'students/add_student.html')
+
+
+@login_required
+def bulk_add_students(request):
+    is_admin = request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False)
+    if not is_admin:
+        messages.error(request, "Access denied.")
+        return redirect('student_list')
+
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        csv_file = request.FILES['csv_file']
+        decoded_file = csv_file.read().decode('utf-8').splitlines()
+        reader = csv.reader(decoded_file)
+        
+        header = next(reader, None)
+
+        from accounts.models import User
+        count = 0
+        for row in reader:
+            if len(row) >= 7:
+                first_name, last_name, email, course, year, division, roll_number = [x.strip() for x in row[:7]]
+                
+                if not User.objects.filter(username=email).exists():
+                    user = User.objects.create_user(
+                        username=email,
+                        email=email,
+                        password="Password@123",
+                        first_name=first_name,
+                        last_name=last_name,
+                        role="STUDENT"
+                    )
+                    StudentProfile.objects.create(
+                        user=user,
+                        course=course,
+                        year=year,
+                        division=division,
+                        roll_number=roll_number
+                    )
+                    count += 1
+
+        messages.success(request, f"🎉 Successfully uploaded {count} students!")
+        return redirect('student_list')
+
+    return render(request, 'students/bulk_add.html')
+
+
+@login_required
+def student_pass(request, student_id):
+    student = get_object_or_404(StudentProfile, id=student_id)
+
+    qr_content = f"STUDENT_PASS:{student.student_id}"
+    qr = qrcode.QRCode(version=1, box_size=8, border=2)
+    qr.add_data(qr_content)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="#5C061C", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    qr_b64 = base64.b64encode(buffer.getvalue()).decode()
+
+    context = {
+        'student': student,
+        'qr_b64': qr_b64,
+    }
+    return render(request, 'students/student_pass.html', context)

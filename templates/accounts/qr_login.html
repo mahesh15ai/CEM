@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200 text-center">
+    
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+            <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Student QR Pass Login</h2>
+        <p class="text-xs text-slate-500 mt-1">Scan your Digital ID Pass QR Code to log in instantly</p>
+    </div>
+
+    <!-- Live Camera Preview Box -->
+    <div class="relative w-full aspect-square bg-slate-900 rounded-2xl overflow-hidden shadow-inner border-2 border-brand-500 mb-4 flex items-center justify-center">
+        <video id="webcam-preview" class="w-full h-full object-cover"></video>
+        
+        <!-- Scanner Overlay Grid -->
+        <div class="absolute inset-0 border-2 border-dashed border-brand-accent/70 m-8 rounded-xl pointer-events-none animate-pulse flex items-center justify-center">
+            <span class="text-[10px] text-white/80 font-mono uppercase tracking-widest bg-black/40 px-2 py-1 rounded">Align QR Inside Box</span>
+        </div>
+    </div>
+
+    <!-- Status Message -->
+    <div id="scan-status" class="text-xs font-bold text-slate-600 mb-4">
+        Initializing camera...
+    </div>
+
+    <!-- Hidden Form Submitted Automatically on Scan -->
+    <form id="qr-form" method="POST" action="{% url 'qr_login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="qr_data" id="qr_data_input">
+    </form>
+
+    <a href="{% url 'login' %}" class="inline-block text-xs text-slate-500 font-bold hover:text-brand-600 transition">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Back to Username Login
+    </a>
+</div>
+
+<!-- HTML5 QR Code Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        document.getElementById('scan-status').innerText = "QR Detected! Logging in...";
+        document.getElementById('qr_data_input').value = decodedText;
+        
+        // Stop camera and submit form
+        html5QrcodeScanner.clear();
+        document.getElementById('qr-form').submit();
+    }
+
+    function onScanFailure(error) {
+        // Handle scanning errors silently
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "webcam-preview",
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        /* verbose= */ false
+    );
+    
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+</script>
+{% endblock %}

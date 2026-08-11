@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+    <div class="border-b pb-4">
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-plus text-brand-600"></i>
+            <span>Create New Event</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">Publish a new event for college students.</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-4 text-xs font-bold text-slate-700">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block uppercase mb-1">Event Title</label>
+            <input type="text" name="title" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm">
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Description</label>
+            <textarea name="description" rows="4" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block uppercase mb-1">Event Date</label>
+                <input type="date" name="event_date" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm">
+            </div>
+
+            <div>
+                <label class="block uppercase mb-1">Event Time</label>
+                <input type="time" name="event_time" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm">
+            </div>
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Venue / Location</label>
+            <input type="text" name="venue" required value="College Campus Auditorium" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm">
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Event Banner / Poster (Optional)</label>
+            <input type="file" name="poster" accept="image/*" class="w-full p-2 border rounded-xl bg-slate-50">
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-3.5 rounded-xl shadow-md transition text-sm">
+            Publish Event
+        </button>
+    </form>
+</div>
+{% endblock %}

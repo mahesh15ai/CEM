@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+    <div class="border-b pb-4">
+        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap text-brand-600"></i>
+            <span>Issue Digital Certificate</span>
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">Award official digital certificates to enrolled students.</p>
+    </div>
+
+    <form method="POST" class="space-y-4 text-xs font-bold text-slate-700">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block uppercase mb-1">Select Student</label>
+            <select name="student_id" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm bg-white">
+                <option value="">-- Choose Student --</option>
+                {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.student_id }} - {{ student.user.get_full_name }} ({{ student.course }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Certificate Title / Event Name</label>
+            <input type="text" name="title" placeholder="e.g. Winner - TechVista Web Hackathon 2026" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm">
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Certificate Type</label>
+            <select name="certificate_type" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm bg-white">
+                <option value="Event Participation">Event Participation</option>
+                <option value="Academic Excellence">Academic Excellence</option>
+                <option value="Course Completion">Course Completion</option>
+                <option value="Sports & Extra Curricular">Sports & Extra Curricular</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block uppercase mb-1">Additional Remarks (Optional)</label>
+            <textarea name="description" rows="3" placeholder="e.g. Secured 1st Position with Outstanding Achievement." class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none font-medium text-sm"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-3.5 rounded-xl shadow-md transition text-sm">
+            Issue Certificate
+        </button>
+    </form>
+</div>
+{% endblock %}

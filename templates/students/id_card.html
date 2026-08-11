@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Sided ID Card - {{ student.student_id }}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            700: '#4A0415', /* Vishwabharti Maroon */
+                            800: '#38020F',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Font (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Print Styles for Dual-Sided Standard CR80 Size (85.6mm x 53.98mm) -->
+    <style>
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        
+        /* Standard Vertical CR80 Dimensions in Pixels */
+        .cr80-card {
+            width: 323px;
+            height: 506px;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                background-color: white !important; 
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-container {
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 20px !important;
+                justify-content: center !important;
+            }
+            .cr80-card {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-6 font-sans">
+
+    <!-- Print Action Header -->
+    <div class="no-print mb-8 text-center">
+        <h1 class="text-xl font-bold text-slate-800 mb-2">Student Digital Identity Card Pass</h1>
+        <p class="text-xs text-slate-500 mb-4">Standard Two-Sided Format (Ready for PVC Print)</p>
+        <button onclick="window.print()" class="bg-maroon-700 hover:bg-maroon-800 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all inline-flex items-center space-x-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>Print Double-Sided ID Card</span>
+        </button>
+    </div>
+
+    <!-- BOTH SIDES WRAPPER -->
+    <div class="print-container flex flex-col md:flex-row gap-8 items-center justify-center">
+        
+        <!-- ==================== FRONT SIDE ==================== -->
+        <div class="cr80-card bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 relative flex flex-col justify-between">
+            
+            <!-- Header Section -->
+            <div class="bg-maroon-700 p-3 text-center text-white flex flex-col items-center justify-center border-b-4 border-amber-500">
+                <div class="w-10 h-10 bg-white rounded-full p-1 shadow mb-1 flex items-center justify-center">
+                    <img src="{% static 'images/logo.png' %}" alt="College Logo" class="w-full h-full object-contain rounded-full">
+                </div>
+                <h1 class="font-extrabold text-[11px] tracking-wider uppercase leading-tight">Vishwabharti</h1>
+                <h2 class="font-bold text-[9px] tracking-wider uppercase leading-tight">Mahavidyalaya</h2>
+                <p class="text-[7.5px] text-maroon-100 font-semibold tracking-widest mt-0.5 opacity-90">CIDCO, NANDED</p>
+            </div>
+
+            <!-- Body / Student Information -->
+            <div class="px-4 py-3 text-center flex-grow bg-white relative flex flex-col justify-between">
+                
+                <!-- Background Watermark -->
+                <div class="absolute inset-0 opacity-[0.03] flex items-center justify-center pointer-events-none">
+                    <img src="{% static 'images/logo.png' %}" class="w-32 h-32 object-contain grayscale">
+                </div>
+
+                <!-- Student Photo -->
+                <div class="w-24 h-28 mx-auto rounded-lg overflow-hidden border-2 border-maroon-700 shadow my-1 relative z-10 bg-slate-50 flex-shrink-0">
+                    {% if student.photo %}
+                        <img src="{{ student.photo.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 font-black text-2xl">
+                            {{ student.user.first_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Name and Course -->
+                <div class="relative z-10 mt-1">
+                    <h2 class="text-sm font-black text-slate-900 uppercase leading-tight truncate">{{ student.user.get_full_name }}</h2>
+                    <p class="text-[10px] font-bold text-maroon-700 mt-0.5">{{ student.year }} ({{ student.get_course_display|default:student.course }})</p>
+                </div>
+
+                <!-- Details Table -->
+                <div class="mt-2 text-left text-[9.5px] space-y-1.5 bg-slate-50/90 p-2.5 rounded-lg border border-slate-100 relative z-10 shadow-sm">
+                    <div class="flex justify-between border-b border-slate-200 pb-1">
+                        <span class="text-slate-500 font-bold uppercase text-[8px] tracking-wider">Roll No.</span> 
+                        <span class="font-black text-slate-800 text-[10px]">{{ student.roll_number }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-200 pb-1">
+                        <span class="text-slate-500 font-bold uppercase text-[8px] tracking-wider">Student ID</span> 
+                        <span class="font-black text-maroon-700 text-[10px] font-mono">{{ student.student_id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500 font-bold uppercase text-[8px] tracking-wider">DOB</span> 
+                        <span class="font-black text-slate-800 text-[10px]">{{ student.dob|date:"d M Y"|default:"N/A" }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-2 relative z-10 text-[8px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                    FRONT SIDE PASS
+                </div>
+            </div>
+
+            <!-- Dynamic Validity Footer -->
+            <div class="bg-maroon-800 text-white flex justify-between items-center px-3 py-1.5 border-t border-maroon-700">
+                <span class="text-[7.5px] font-semibold tracking-wider text-maroon-100 uppercase">
+                    SESS: {{ student.academic_session }}
+                </span>
+                <span class="text-[7.5px] font-bold tracking-wider text-amber-400 uppercase">
+                    VALID UPTO: {{ student.valid_until|date:"d M Y" }}
+                </span>
+            </div>
+        </div>
+
+        <!-- ==================== BACK SIDE ==================== -->
+        <div class="cr80-card bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 relative flex flex-col justify-between">
+            
+            <!-- Top Header -->
+            <div class="bg-maroon-700 py-2.5 px-3 text-center text-white border-b-2 border-amber-500">
+                <h3 class="font-bold text-[10px] tracking-widest uppercase">SCAN FOR ATTENDANCE & VERIFICATION</h3>
+            </div>
+
+            <!-- Body Content with Dedicated Large QR Code -->
+            <div class="p-4 text-center flex-grow flex flex-col justify-between items-center bg-white relative">
+                
+                <!-- Instructions / Instructions List -->
+                <div class="text-[8px] text-slate-500 text-left space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-100 w-full">
+                    <p class="font-bold text-slate-700 text-[8.5px] mb-1 uppercase text-center border-b pb-0.5">Instructions</p>
+                    <p>1. This card must be presented for automated QR attendance.</p>
+                    <p>2. Non-transferable and property of Vishwabharti Mahavidyalaya.</p>
+                    <p>3. If found, please return to CIDCO Nanded Campus.</p>
+                </div>
+
+                <!-- DEDICATED BIG QR CODE -->
+                <div class="my-2 flex flex-col items-center justify-center">
+                    {% if student.qr_code %}
+                        <div class="bg-white p-2 rounded-xl border-2 border-slate-200 shadow-md inline-block">
+                            <img src="{{ student.qr_code.url }}" class="w-32 h-32 object-contain">
+                        </div>
+                    {% endif %}
+                    <span class="text-[9px] font-mono font-extrabold text-maroon-700 mt-1.5 tracking-wider">{{ student.student_id }}</span>
+                </div>
+
+                <!-- Principal Stamp / Signature Space -->
+                <div class="w-full flex justify-between items-end px-2 pt-2 border-t border-slate-100">
+                    <div class="text-left text-[7.5px] text-slate-400">
+                        <p class="font-bold text-slate-600 uppercase">College Contact:</p>
+                        <p>02462-261234</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-6 flex items-end justify-center font-serif italic text-xs font-bold text-slate-800 border-b border-slate-400 px-3">
+                            Dr. Principal
+                        </div>
+                        <span class="text-[7.5px] font-bold text-slate-500 uppercase mt-0.5 block">Issued Authority</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Address Footer -->
+            <div class="bg-maroon-800 text-white text-[7.5px] text-center py-2 px-2 font-medium tracking-wide">
+                Vishwabharti Mahavidyalaya, CIDCO, Nanded - 431603
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

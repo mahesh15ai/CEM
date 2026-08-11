@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+    
+    <!-- Top Stats Bar & Header -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-xl font-black text-slate-900">{{ event.title }}</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Live Gate Entry Attendance Sheet & Records</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="bg-brand-50 px-4 py-2 rounded-xl text-center border border-brand-100">
+                <span class="text-[9px] font-bold uppercase text-slate-400 block">Registrations</span>
+                <span class="text-sm font-black text-brand-600">{{ registrations_count }}</span>
+            </div>
+            <div class="bg-emerald-50 px-4 py-2 rounded-xl text-center border border-emerald-100">
+                <span class="text-[9px] font-bold uppercase text-slate-400 block">Attended Gate Entry</span>
+                <span class="text-sm font-black text-emerald-600">{{ attendances|length }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Record Table Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
+            <h3 class="font-bold text-xs text-slate-800">Scanned Students Entry Log</h3>
+            
+            <div class="flex items-center gap-2">
+                <!-- Excel Download Button -->
+                <a href="{% url 'export_event_attendance_excel' event.id %}" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-file-excel text-amber-300"></i>
+                    <span>Download Excel Sheet</span>
+                </a>
+                
+                <!-- Print Button -->
+                <button onclick="window.print()" class="text-xs text-brand-600 font-bold hover:underline bg-brand-50 px-3 py-2 rounded-xl border border-brand-100">
+                    <i class="fa-solid fa-print mr-1"></i> Print
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-400 font-bold uppercase border-b border-slate-100">
+                        <th class="p-3.5 px-5">Student ID</th>
+                        <th class="p-3.5 px-5">Student Name</th>
+                        <th class="p-3.5 px-5">Course</th>
+                        <th class="p-3.5 px-5">Entry In-Time</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for item in attendances %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3.5 px-5 font-mono font-bold text-brand-600">{{ item.student.student_id }}</td>
+                        <td class="p-3.5 px-5 font-bold text-slate-800">{{ item.student.user.get_full_name }}</td>
+                        <td class="p-3.5 px-5 text-slate-600">{{ item.student.course }} ({{ item.student.year }})</td>
+                        <td class="p-3.5 px-5 font-bold text-emerald-600">{{ item.entry_time|date:"h:i:s A" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-slate-400">No students scanned at the gate yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Auto Refresh Script for Attendance Sheet -->
+<script>
+    setTimeout(function(){
+        window.location.reload();
+    }, 15000); // Refreshes page every 15 seconds
+</script>
+{% endblock %}

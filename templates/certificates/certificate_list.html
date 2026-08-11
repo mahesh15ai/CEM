@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 gap-4">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-award text-brand-600"></i>
+                <span>Digital Certificates Vault</span>
+            </h1>
+            <p class="text-xs text-slate-500 mt-0.5">View, download, and verify official college certificates.</p>
+        </div>
+
+        {% if is_admin %}
+        <a href="{% url 'issue_certificate' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>Issue New Certificate</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cert in certificates %}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 flex flex-col justify-between hover:shadow-md transition">
+            <div class="space-y-3">
+                <div class="flex justify-between items-start">
+                    <span class="px-2.5 py-1 bg-brand-50 text-brand-700 font-extrabold text-[10px] rounded-full uppercase tracking-wider">
+                        {{ cert.certificate_type }}
+                    </span>
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">{{ cert.issue_date|date:"M d, Y" }}</span>
+                </div>
+
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-sm leading-snug">{{ cert.title }}</h3>
+                    <p class="text-xs font-bold text-slate-600 mt-1">Awarded To: <span class="text-brand-600">{{ cert.student.user.get_full_name }}</span></p>
+                    <p class="text-[11px] font-mono text-slate-400">Student ID: {{ cert.student.student_id }}</p>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 truncate max-w-[150px]">{{ cert.certificate_id }}</span>
+                <a href="{% url 'view_certificate' cert.certificate_id %}" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-contract text-amber-400"></i>
+                    <span>View Certificate</span>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-200">
+            <i class="fa-solid fa-award text-4xl text-slate-300 mb-2 block"></i>
+            <h4 class="font-bold text-slate-700 text-sm">No Certificates Found</h4>
+            <p class="text-xs text-slate-400 mt-1">No certificates issued yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

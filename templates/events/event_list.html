@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- Top Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 gap-4">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-star text-brand-600"></i>
+                <span>College Events & Expo</span>
+            </h1>
+            <p class="text-xs text-slate-500 mt-0.5">Explore upcoming events and register instantly.</p>
+        </div>
+
+        {% if user.is_superuser or user.is_staff or user.is_admin %}
+        <a href="{% url 'create_event' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>Create New Event</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Events Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in events %}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between transition hover:shadow-md">
+            <div>
+                <!-- Event Poster / Placeholder -->
+                <div class="h-44 bg-slate-900 relative overflow-hidden flex items-center justify-center">
+                    {% if event.poster %}
+                        <img src="{{ event.poster.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="text-center text-slate-500">
+                            <i class="fa-solid fa-calendar-day text-4xl mb-1 text-slate-600"></i>
+                            <span class="block text-[11px] font-bold uppercase tracking-wider">Vishwabharti Event</span>
+                        </div>
+                    {% endif %}
+                    <span class="absolute top-3 right-3 bg-brand-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow">
+                        {{ event.event_date|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                <!-- Event Info -->
+                <div class="p-5 space-y-3">
+                    <h3 class="font-extrabold text-base text-slate-900 leading-snug">{{ event.title }}</h3>
+                    <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">{{ event.description }}</p>
+
+                    <div class="space-y-1.5 pt-2 border-t border-slate-100 text-xs font-medium text-slate-500">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-brand-600 w-4"></i>
+                            <span>{{ event.event_time|time:"h:i A" }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-brand-600 w-4"></i>
+                            <span>{{ event.venue }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Button Section -->
+            <div class="p-5 pt-0 space-y-2">
+                {% if user.student_profile %}
+                    {% if event.id in registered_event_ids %}
+                        <div class="flex items-center gap-2">
+                            <button disabled class="flex-1 bg-emerald-100 text-emerald-800 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Registered</span>
+                            </button>
+                            <a href="{% url 'event_pass' event.id %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-ticket"></i>
+                                <span>View Pass</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'register_event' event.id %}" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span>Register Now</span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Admin Action Controls for Scanning & Attendance Records -->
+                {% if user.is_superuser or user.is_staff or user.is_admin %}
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+                        <a href="{% url 'scan_event_pass' event.id %}" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-[11px] transition shadow flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-qrcode text-amber-400"></i>
+                            <span>Scan Pass</span>
+                        </a>
+                        <a href="{% url 'event_attendance_records' event.id %}" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-[11px] transition border border-slate-200 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-clipboard-user text-brand-600"></i>
+                            <span>Logs</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-200">
+            <i class="fa-solid fa-calendar-xmark text-4xl text-slate-300 mb-2 block"></i>
+            <h4 class="font-bold text-slate-700 text-sm">No Events Published Yet</h4>
+            <p class="text-xs text-slate-400 mt-1">Check back later for upcoming college events!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

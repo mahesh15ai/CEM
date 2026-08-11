@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80">
+    <!-- Header -->
+    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+        <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-slate-900">Student Profile Registration</h2>
+            <p class="text-xs text-slate-500">System generates login credentials and automated identity QR token.</p>
+        </div>
+    </div>
+
+    <!-- Registration Form -->
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Auto-Generated Student ID & Roll Number -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Student ID (Username)</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-600"></i>
+                    </span>
+                    <input type="text" 
+                           value="Auto-Generated on Save" 
+                           readonly 
+                           class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-100 text-slate-500 font-mono focus:outline-none cursor-not-allowed">
+                </div>
+                <span class="text-[10px] text-slate-400 font-semibold mt-1 block">System will auto-assign next available ID on save.</span>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Roll Number</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs">
+                        <i class="fa-solid fa-list-ol"></i>
+                    </span>
+                    <input type="number" name="roll_number" required placeholder="101" class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- First Name & Last Name -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">First Name</label>
+                <input type="text" name="first_name" required placeholder="Maheshwari" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Last Name</label>
+                <input type="text" name="last_name" required placeholder="Kangule" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+        </div>
+
+        <!-- Email Address & Date of Birth -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Email Address</label>
+                <input type="email" name="email" required placeholder="maheshwari@gmail.com" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Date of Birth</label>
+                <input type="date" name="dob" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+        </div>
+
+        <!-- Department & Course Dropdown -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Department</label>
+                <input type="text" name="department" required placeholder="Computer Science & IT" value="Computer Science & IT" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Course Program</label>
+                <select name="course" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="BCA" selected>BCA (Bachelor of Computer Applications)</option>
+                    <option value="BCS">BCS (Bachelor of Computer Science)</option>
+                    <option value="BBA">BBA (Bachelor of Business Administration)</option>
+                    <option value="MSC">M.Sc. (Master of Science)</option>
+                    <option value="BSC">B.Sc. (Bachelor of Science)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Year & Division Dropdowns -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Academic Year</label>
+                <select name="year" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="First Year">First Year</option>
+                    <option value="Second Year">Second Year</option>
+                    <option value="Third Year" selected>Third Year</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Division</label>
+                <select name="division" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="A" selected>Division A</option>
+                    <option value="B">Division B</option>
+                    <option value="C">Division C</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Student Photograph Upload -->
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Student Photograph</label>
+            <input type="file" name="photo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-600 hover:file:bg-brand-100 cursor-pointer">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-address-card"></i>
+            <span>Register Profile & Issue ID Pass</span>
+        </button>
+    </form>
+</div>
+{% endblock %}

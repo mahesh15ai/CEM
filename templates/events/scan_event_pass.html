@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-qrcode text-brand-600"></i>
+                <span>Gate Entry Scanner</span>
+            </h1>
+            <p class="text-xs text-brand-600 font-bold mt-0.5">{{ event.title }}</p>
+        </div>
+        <a href="{% url 'event_attendance_records' event.id %}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-brand-600"></i>
+            <span>View Attendance Log</span>
+        </a>
+    </div>
+
+    <!-- Live Camera Scanner Container -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 text-center space-y-4">
+        <div id="reader" class="w-full max-w-md mx-auto overflow-hidden rounded-2xl border-2 border-brand-600 shadow-inner"></div>
+        <p class="text-xs font-semibold text-slate-400">Point phone camera or webcam at student's Event Pass QR Code</p>
+
+        <!-- Dynamic Scan Result Feedback -->
+        <div id="scan-result" class="hidden p-4 rounded-xl text-xs font-extrabold shadow-sm"></div>
+    </div>
+
+</div>
+
+<!-- Html5-Qrcode Camera Library -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        let formData = new FormData();
+        formData.append('qr_code', decodedText);
+
+        fetch("{% url 'process_event_qr' %}", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            let resultDiv = document.getElementById('scan-result');
+            resultDiv.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800', 'bg-amber-100', 'text-amber-800');
+
+            if (data.status === 'success') {
+                resultDiv.classList.add('bg-emerald-100', 'text-emerald-800');
+                resultDiv.innerHTML = `<i class="fa-solid fa-circle-check text-lg mr-2"></i> ${data.message}`;
+            } else if (data.status === 'warning') {
+                resultDiv.classList.add('bg-amber-100', 'text-amber-800');
+                resultDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-lg mr-2"></i> ${data.message}`;
+            } else {
+                resultDiv.classList.add('bg-rose-100', 'text-rose-800');
+                resultDiv.innerHTML = `<i class="fa-solid fa-circle-xmark text-lg mr-2"></i> ${data.message}`;
+            }
+        });
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: {width: 250, height: 250} }, false
+    );
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
+{% endblock %}
