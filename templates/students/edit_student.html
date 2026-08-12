@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80">
+    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-user-pen"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-slate-900">Edit Student Profile</h2>
+            <p class="text-xs text-slate-500">Update profile details for ID: <span class="font-mono font-bold text-brand-600">{{ student.student_id }}</span></p>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Student ID</label>
+                <input type="text" value="{{ student.student_id }}" readonly class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-100 font-mono text-slate-500 cursor-not-allowed">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Roll Number</label>
+                <input type="number" name="roll_number" value="{{ student.roll_number }}" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">First Name</label>
+                <input type="text" name="first_name" value="{{ student.user.first_name }}" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Last Name</label>
+                <input type="text" name="last_name" value="{{ student.user.last_name }}" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Email Address</label>
+                <input type="email" name="email" value="{{ student.user.email }}" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Date of Birth</label>
+                <input type="date" name="dob" value="{{ student.dob|date:'Y-m-d' }}" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Department</label>
+                <input type="text" name="department" value="{{ student.department }}" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Course Program</label>
+                <select name="course" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="BCA" {% if student.course == 'BCA' %}selected{% endif %}>BCA (Bachelor of Computer Applications)</option>
+                    <option value="BCS" {% if student.course == 'BCS' %}selected{% endif %}>BCS (Bachelor of Computer Science)</option>
+                    <option value="BBA" {% if student.course == 'BBA' %}selected{% endif %}>BBA (Bachelor of Business Administration)</option>
+                    <option value="MSC" {% if student.course == 'MSC' %}selected{% endif %}>M.Sc. (Master of Science)</option>
+                    <option value="BSC" {% if student.course == 'BSC' %}selected{% endif %}>B.Sc. (Bachelor of Science)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Academic Year</label>
+                <select name="year" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="First Year" {% if student.year == 'First Year' %}selected{% endif %}>First Year</option>
+                    <option value="Second Year" {% if student.year == 'Second Year' %}selected{% endif %}>Second Year</option>
+                    <option value="Third Year" {% if student.year == 'Third Year' %}selected{% endif %}>Third Year</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Division</label>
+                <select name="division" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium text-slate-700">
+                    <option value="A" {% if student.division == 'A' %}selected{% endif %}>Division A</option>
+                    <option value="B" {% if student.division == 'B' %}selected{% endif %}>Division B</option>
+                    <option value="C" {% if student.division == 'C' %}selected{% endif %}>Division C</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Student Photograph</label>
+            <input type="file" name="photo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-600 hover:file:bg-brand-100 cursor-pointer">
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+            <a href="{% url 'student_list' %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs transition">Cancel</a>
+            <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2 text-xs">
+                <i class="fa-solid fa-floppy-disk"></i> Update Student Profile
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

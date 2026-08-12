@@ -32,7 +32,12 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" name="password" class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" required placeholder="••••••••">
+                    <input type="password" id="password-input" name="password" class="w-full pl-10 pr-11 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" required placeholder="••••••••">
+                    
+                    <!-- Show/Hide Password Toggle Icon -->
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                        <i class="fa-solid fa-eye" id="password-icon"></i>
+                    </button>
                 </div>
             </div>
 
@@ -59,4 +64,21 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript to Toggle Password Visibility -->
+<script>
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password-input');
+    const passwordIcon = document.getElementById('password-icon');
+
+    togglePassword.addEventListener('click', function () {
+        // Toggle type attribute
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle the eye / eye-slash icon
+        passwordIcon.classList.toggle('fa-eye');
+        passwordIcon.classList.toggle('fa-eye-slash');
+    });
+</script>
 {% endblock %}

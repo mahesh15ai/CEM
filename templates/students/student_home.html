@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- 1. Dynamic Left-to-Right Animated Image Carousel -->
+    <div class="relative bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+        
+        <!-- Slider Container -->
+        <div id="event-carousel" class="relative w-full h-72 sm:h-[420px] flex transition-transform duration-700 ease-in-out">
+            {% for banner in banners %}
+            <div class="w-full h-full flex-shrink-0 relative">
+                <img src="{{ banner.image.url }}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent p-6 sm:p-10 flex flex-col justify-end">
+                    <span class="bg-amber-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase px-3.5 py-1 rounded-full w-max mb-2 shadow-md">
+                        {{ banner.badge_text }}
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-white">{{ banner.title }}</h2>
+                    {% if banner.subtitle %}
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">{{ banner.subtitle }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <!-- Default Slide if no admin banners are uploaded -->
+            <div class="w-full h-full flex-shrink-0 relative">
+                <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent p-6 sm:p-10 flex flex-col justify-end">
+                    <span class="bg-amber-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase px-3.5 py-1 rounded-full w-max mb-2 shadow-md">Annual Convocation 2026</span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-white">Vishwabharti Annual Ceremony & Gathering</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">Celebrating excellence in academics, sports, and technical achievements.</p>
+                </div>
+            </div>
+            <div class="w-full h-full flex-shrink-0 relative">
+                <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent p-6 sm:p-10 flex flex-col justify-end">
+                    <span class="bg-emerald-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase px-3.5 py-1 rounded-full w-max mb-2 shadow-md">Sports Meet 2026</span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-white">Inter-College Sports Tournament</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">Cricket, Volleyball, Athletics & Chess Competitions.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Left / Right Control Navigation Buttons -->
+        <button id="prev-slide" class="absolute left-4 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition border border-white/10 shadow-lg">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button id="next-slide" class="absolute right-4 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition border border-white/10 shadow-lg">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Dynamic Carousel Dots -->
+        <div id="carousel-dots" class="absolute bottom-4 right-6 flex items-center gap-2"></div>
+
+    </div>
+
+    <!-- 2. Clean Welcome Message Bar -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-[11px] font-extrabold text-brand-600 uppercase tracking-wider">Vishwabharti Student Portal</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900">
+                Welcome back, {{ student.user.first_name }} {{ student.user.last_name }}! 👋
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">
+                {{ student.course }} ({{ student.year }}) &bull; Division {{ student.division }} &bull; Roll No: {{ student.roll_number }}
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a href="{% url 'student_profile_view' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-5 py-3 rounded-2xl shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-id-card"></i>
+                <span>My Profile & Pass</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 3. Quick Action Cards Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <a href="{% url 'student_profile_view' %}" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col items-center text-center group">
+            <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Digital QR Pass</span>
+            <span class="text-[10px] text-slate-400 mt-0.5">Show Gate Entry Pass</span>
+        </a>
+
+        <a href="{% url 'event_list' %}" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col items-center text-center group">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Campus Events</span>
+            <span class="text-[10px] text-slate-400 mt-0.5">Fests & Sports Meet</span>
+        </a>
+
+        <a href="{% url 'certificate_list' %}" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col items-center text-center group">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <span class="text-xs font-bold text-slate-800">My Certificates</span>
+            <span class="text-[10px] text-slate-400 mt-0.5">View Achievements</span>
+        </a>
+
+        <a href="{% url 'edit_my_profile' %}" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col items-center text-center group">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <span class="text-xs font-bold text-slate-800">Edit Details</span>
+            <span class="text-[10px] text-slate-400 mt-0.5">Update Photo & Info</span>
+        </a>
+    </div>
+
+    <!-- 4. Dynamic Notice Banner from Admin -->
+    {% if latest_notice %}
+    <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-sm flex items-center gap-3">
+        <div class="bg-brand-600 text-white text-xs font-black px-3 py-1.5 rounded-xl uppercase tracking-wider flex-shrink-0">
+            {{ latest_notice.title }}
+        </div>
+        <p class="text-xs text-slate-300 truncate">
+            📢 {{ latest_notice.notice_text }}
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- JavaScript for Dynamic Carousel Sliding -->
+<script>
+    const carousel = document.getElementById('event-carousel');
+    const prevBtn = document.getElementById('prev-slide');
+    const nextBtn = document.getElementById('next-slide');
+    const dotsContainer = document.getElementById('carousel-dots');
+    
+    const totalSlides = carousel.children.length;
+    let currentIndex = 0;
+
+    // Create Dots dynamically based on available slides
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('span');
+        dot.className = i === 0 ? 'dot w-4 h-1.5 rounded-full bg-white transition-all' : 'dot w-1.5 h-1.5 rounded-full bg-white/40 transition-all';
+        dotsContainer.appendChild(dot);
+    }
+    const dots = document.querySelectorAll('.dot');
+
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((dot, idx) => {
+            if(idx === currentIndex) {
+                dot.classList.remove('w-1.5', 'bg-white/40');
+                dot.classList.add('w-4', 'bg-white');
+            } else {
+                dot.classList.remove('w-4', 'bg-white');
+                dot.classList.add('w-1.5', 'bg-white/40');
+            }
+        });
+    }
+
+    if (totalSlides > 1) {
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateCarousel();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        });
+
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateCarousel();
+        }, 4000);
+    }
+</script>
+{% endblock %}

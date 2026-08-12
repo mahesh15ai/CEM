@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-4">
+            <img src="{{ student.photo.url }}" alt="Profile Photo" class="w-20 h-20 rounded-2xl object-cover border-2 border-brand-500 shadow-sm">
+            <div>
+                <h1 class="text-xl font-black text-slate-900">{{ student.user.get_full_name }}</h1>
+                <p class="text-xs text-slate-500 font-mono">ID: <span class="font-bold text-brand-600">{{ student.student_id }}</span></p>
+                <p class="text-xs text-slate-400 mt-0.5">{{ student.course }} ({{ student.year }}) - Div {{ student.division }}</p>
+            </div>
+        </div>
+        <a href="{% url 'edit_my_profile' %}" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Edit Profile</span>
+        </a>
+    </div>
+
+    <!-- Student Details Card -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Email Address</span>
+            <span class="text-sm font-semibold text-slate-800">{{ student.user.email }}</span>
+        </div>
+        <div>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Department</span>
+            <span class="text-sm font-semibold text-slate-800">{{ student.department }}</span>
+        </div>
+        <div>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Roll Number</span>
+            <span class="text-sm font-semibold text-slate-800">{{ student.roll_number }}</span>
+        </div>
+        <div>
+            <span class="text-[10px] font-bold uppercase text-slate-400 block">Date of Birth</span>
+            <span class="text-sm font-semibold text-slate-800">{{ student.dob|default:"Not Provided" }}</span>
+        </div>
+    </div>
+
+    <!-- Protected QR Pass Box (Non-Editable) -->
+    <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border border-slate-800 text-center space-y-3">
+        <div class="inline-flex items-center gap-2 bg-brand-500/20 text-brand-400 px-3 py-1 rounded-full text-xs font-bold border border-brand-500/30">
+            <i class="fa-solid fa-lock text-[10px]"></i> System Generated Official Pass Token
+        </div>
+        <p class="text-xs text-slate-400">This QR code is uniquely tied to your Student ID and cannot be altered.</p>
+        {% if student.qr_code %}
+            <div class="p-3 bg-white rounded-xl inline-block shadow-lg">
+                <img src="{{ student.qr_code.url }}" alt="Digital QR Pass" class="w-40 h-40 object-contain">
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

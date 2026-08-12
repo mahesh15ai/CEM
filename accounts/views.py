@@ -9,7 +9,7 @@ def login_view(request):
     if request.user.is_authenticated:
         if request.user.is_superuser or request.user.is_staff or getattr(request.user, 'is_admin', False):
             return redirect('student_list')
-        return redirect('event_list')
+        return redirect('student_dashboard')
 
     if request.method == 'POST':
         input_identifier = request.POST.get('username', '').strip()
@@ -39,7 +39,7 @@ def login_view(request):
                 if user.is_superuser or user.is_staff or getattr(user, 'is_admin', False):
                     return redirect('student_list')
                 else:
-                    return redirect('event_list')
+                    return redirect('student_dashboard')
             else:
                 messages.error(request, "This account has been disabled.")
         else:
@@ -58,20 +58,33 @@ def qr_login_view(request):
     if request.method == 'POST':
         qr_data = request.POST.get('qr_data', '').strip()
         
-        # Clean QR prefix: "STUDENT:VBM20260001", "STUDENT_PASS:VBM20260001", or raw "VBM20260001"
+        # 📌 DEBUG LOGGING FOR TERMINAL
+        print("\n" + "="*50)
+        print(f"[DEBUG QR SCAN] RAW QR DATA RECEIVED: '{qr_data}'")
+        
+        # Clean QR prefixes: "STUDENT_PASS:VBM20260001", "STUDENT:VBM20260001", or raw "VBM20260001"
         student_id = qr_data.replace('STUDENT_PASS:', '').replace('STUDENT:', '').strip()
+        print(f"[DEBUG QR SCAN] CLEANED STUDENT ID: '{student_id}'")
 
         student = StudentProfile.objects.filter(student_id__iexact=student_id).select_related('user').first()
 
         if student and student.user:
             user = student.user
-            login(request, user)
-            messages.success(request, f"Welcome back, {user.first_name or user.username}! Logged in via Identity QR.")
             
-            # Redirect Student to Events List
-            return redirect('event_list')
+            # Set authentication backend manually (since password authentication was skipped)
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            
+            login(request, user)
+            print(f"[DEBUG QR SCAN] SUCCESS: Logged in user '{user.username}' (Student ID: {student.student_id})")
+            print("="*50 + "\n")
+            
+            messages.success(request, f"🎉 Welcome back, {user.first_name or user.username}! Logged in via Identity QR.")
+            return redirect('student_dashboard')
         else:
-            messages.error(request, "Invalid QR Pass or Student record not found.")
-            return redirect('login')
+            print(f"[DEBUG QR SCAN] FAILED: StudentProfile matching ID '{student_id}' NOT FOUND in Database.")
+            print("="*50 + "\n")
+            
+            messages.error(request, f"❌ Invalid QR Pass. Scanned ID '{student_id}' does not match any student record.")
+            return redirect('qr_login')
 
     return render(request, 'accounts/qr_login.html')

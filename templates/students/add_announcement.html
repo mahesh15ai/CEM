@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80">
+    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-black text-slate-900">Post Announcement / Notice</h2>
+            <p class="text-xs text-slate-500">This notice will immediately appear on all student home pages.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="space-y-5">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Tag / Title Header</label>
+            <input type="text" name="title" value="Notice" required placeholder="e.g. Urgent, Notice, Sports Fest" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Notice Message</label>
+            <textarea name="notice_text" rows="3" required placeholder="Type official announcement message here..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3">
+            <a href="{% url 'student_dashboard' %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs transition">Cancel</a>
+            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition text-xs">
+                Post Announcement
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

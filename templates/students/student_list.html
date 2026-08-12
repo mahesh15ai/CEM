@@ -10,11 +10,15 @@
                 <i class="fa-solid fa-users text-brand-600"></i>
                 <span>Students Directory</span>
             </h1>
-            <p class="text-xs text-slate-500 mt-0.5">Browse, search, and manage enrolled student profiles.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Browse, search, edit, and manage enrolled student profiles.</p>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex items-center gap-2">
+            <a href="{% url 'export_students_excel' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-file-csv"></i>
+                <span>Export Directory</span>
+            </a>
             <a href="{% url 'bulk_add_students' %}" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5">
                 <i class="fa-solid fa-upload"></i>
                 <span>Bulk CSV Add</span>
@@ -35,10 +39,11 @@
         <div class="w-full md:w-56">
             <select name="course" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                 <option value="">-- All Courses --</option>
-                <option value="B.Sc Computer Science" {% if selected_course == 'B.Sc Computer Science' %}selected{% endif %}>B.Sc Computer Science</option>
-                <option value="B.C.A." {% if selected_course == 'B.C.A.' %}selected{% endif %}>B.C.A.</option>
-                <option value="B.Tech IT" {% if selected_course == 'B.Tech IT' %}selected{% endif %}>B.Tech IT</option>
-                <option value="B.Com" {% if selected_course == 'B.Com' %}selected{% endif %}>B.Com</option>
+                <option value="BCA" {% if selected_course == 'BCA' %}selected{% endif %}>BCA</option>
+                <option value="BCS" {% if selected_course == 'BCS' %}selected{% endif %}>BCS</option>
+                <option value="BBA" {% if selected_course == 'BBA' %}selected{% endif %}>BBA</option>
+                <option value="MSC" {% if selected_course == 'MSC' %}selected{% endif %}>M.Sc.</option>
+                <option value="BSC" {% if selected_course == 'BSC' %}selected{% endif %}>B.Sc.</option>
             </select>
         </div>
         <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">Filter</button>
@@ -54,7 +59,7 @@
                         <th class="p-3.5 px-5">Student Name</th>
                         <th class="p-3.5 px-5">Course & Year</th>
                         <th class="p-3.5 px-5">Division / Roll</th>
-                        <th class="p-3.5 px-5 text-right">Digital Pass</th>
+                        <th class="p-3.5 px-5 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -67,11 +72,30 @@
                         </td>
                         <td class="p-3.5 px-5 font-medium text-slate-600">{{ student.course }} ({{ student.year }})</td>
                         <td class="p-3.5 px-5 text-slate-500 font-medium">Div {{ student.division }} - Roll {{ student.roll_number }}</td>
+                        
+                        <!-- CRUD Action Buttons -->
                         <td class="p-3.5 px-5 text-right">
-                            <a href="{% url 'student_pass' student.id %}" target="_blank" class="inline-flex items-center gap-1 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-1.5 rounded-lg border border-brand-100 transition text-[11px]">
-                                <i class="fa-solid fa-id-card text-brand-600"></i>
-                                <span>Digital Pass & ID</span>
-                            </a>
+                            <div class="inline-flex items-center justify-end gap-2">
+                                <!-- Digital Pass / ID Card -->
+                                <a href="{% url 'student_pass' student.id %}" target="_blank" class="inline-flex items-center gap-1 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-2.5 py-1.5 rounded-lg border border-brand-100 transition text-[11px]" title="View Pass">
+                                    <i class="fa-solid fa-id-card text-brand-600"></i>
+                                    <span>Pass</span>
+                                </a>
+
+                                <!-- Edit Student Profile -->
+                                <a href="{% url 'edit_student' student.id %}" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold px-2.5 py-1.5 rounded-lg border border-amber-200 transition text-[11px]" title="Edit Student">
+                                    <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                    <span>Edit</span>
+                                </a>
+
+                                <!-- Delete Student Profile -->
+                                <a href="{% url 'delete_student' student.id %}" 
+                                   onclick="return confirm('Are you sure you want to delete {{ student.user.get_full_name }}?');" 
+                                   class="inline-flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-700 font-bold px-2.5 py-1.5 rounded-lg border border-red-200 transition text-[11px]" title="Delete Student">
+                                    <i class="fa-solid fa-trash text-red-600"></i>
+                                    <span>Delete</span>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="min-h-screen bg-slate-50">
+<html lang="en" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -35,10 +35,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen font-sans antialiased text-slate-800 flex flex-col md:flex-row bg-slate-50">
+<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex flex-col md:flex-row overflow-x-hidden">
 
     {% if user.is_authenticated %}
-    <!-- Mobile Navigation Bar -->
+    <!-- Mobile Navigation Top Bar -->
     <div class="md:hidden bg-brand-700 text-white p-4 flex items-center justify-between border-b border-brand-600 sticky top-0 z-50 shadow-md">
         <div class="flex items-center space-x-3">
             <div class="w-9 h-9 rounded-lg bg-white p-1 flex items-center justify-center shadow flex-shrink-0">
@@ -54,11 +54,11 @@
         </button>
     </div>
 
-    <!-- Sidebar Drawer (Responsive) -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out w-64 bg-brand-700 text-white flex flex-col justify-between flex-shrink-0 shadow-2xl z-40">
+    <!-- Always Fixed Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out w-64 bg-brand-700 text-white flex flex-col justify-between flex-shrink-0 shadow-2xl z-40 h-screen overflow-y-auto">
         <div>
             <!-- Brand Logo Header -->
-            <div class="p-5 border-b border-brand-600/60 hidden md:flex items-center space-x-3 bg-brand-800/40">
+            <div class="p-5 border-b border-brand-600/60 flex items-center space-x-3 bg-brand-800/40">
                 <div class="w-11 h-11 rounded-xl bg-white p-1 flex items-center justify-center shadow-lg ring-2 ring-brand-accent/30 flex-shrink-0">
                     <img src="{% static 'images/logo.png' %}" alt="College Logo" class="w-full h-full object-contain">
                 </div>
@@ -72,7 +72,8 @@
             {% with current_url=request.resolver_match.url_name %}
             <nav class="p-3 space-y-1 text-sm font-medium">
                 {% if user.is_superuser or user.is_staff or user.is_admin %}
-                <a href="{% url 'student_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_list' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
+                <!-- Admin Links -->
+                <a href="{% url 'student_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_list' or current_url == 'edit_student' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-user-graduate w-5 {% if current_url == 'student_list' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Students Directory</span>
                 </a>
@@ -82,19 +83,36 @@
                     <span>Register Student</span>
                 </a>
 
+                <a href="{% url 'add_banner' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'add_banner' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-image w-5 {% if current_url == 'add_banner' %}text-brand-600{% else %}text-amber-300{% endif %}"></i>
+                    <span>+ Add Carousel Banner</span>
+                </a>
+
+                <a href="{% url 'add_announcement' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'add_announcement' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-bullhorn w-5 {% if current_url == 'add_announcement' %}text-brand-600{% else %}text-emerald-400{% endif %}"></i>
+                    <span>+ Post Announcement</span>
+                </a>
+
                 <a href="{% url 'scan_attendance' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'scan_attendance' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
-                    <i class="fa-solid fa-qrcode w-5 {% if current_url == 'scan_attendance' %}text-brand-600{% else %}text-amber-400{% endif %}"></i>
+                    <i class="fa-solid fa-qrcode w-5 {% if current_url == 'scan_attendance' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Attendance Management</span>
                 </a>
                 {% else %}
+                <!-- Student Self-Service Links -->
                 {% if user.student_profile %}
-                <a href="{% url 'student_pass' user.student_profile.id %}" target="_blank" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_pass' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
-                    <i class="fa-solid fa-id-card w-5 text-amber-300"></i>
-                    <span>My Digital Pass</span>
+                <a href="{% url 'student_dashboard' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_dashboard' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-house w-5 {% if current_url == 'student_dashboard' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
+                    <span>Student Home</span>
+                </a>
+
+                <a href="{% url 'student_profile_view' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'student_profile_view' or current_url == 'edit_my_profile' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-user-gear w-5 {% if current_url == 'student_profile_view' %}text-brand-600{% else %}text-amber-300{% endif %}"></i>
+                    <span>My Profile & Pass</span>
                 </a>
                 {% endif %}
                 {% endif %}
 
+                <!-- Shared Links -->
                 <a href="{% url 'event_list' %}" class="flex items-center space-x-3 px-3.5 py-3 rounded-xl transition-all {% if current_url == 'event_list' or current_url == 'create_event' or current_url == 'scan_event_pass' %}bg-white text-brand-700 font-extrabold shadow-md{% else %}text-slate-200 hover:bg-brand-600/70 hover:text-white{% endif %}">
                     <i class="fa-solid fa-calendar-check w-5 {% if current_url == 'event_list' %}text-brand-600{% else %}text-slate-300{% endif %}"></i>
                     <span>Events & Expo</span>
@@ -109,7 +127,7 @@
         </div>
 
         <!-- User Logout -->
-        <div class="p-3 border-t border-brand-600/60 bg-brand-800/30">
+        <div class="p-3 border-t border-brand-600/60 bg-brand-800/30 sticky bottom-0">
             <a href="{% url 'logout' %}" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-200 hover:bg-red-600/80 hover:text-white text-sm font-semibold transition-all">
                 <span class="flex items-center space-x-2">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -125,7 +143,7 @@
     {% endif %}
 
     <!-- Main Content Body -->
-    <div class="flex-1 flex flex-col min-w-0 w-full">
+    <div class="flex-1 flex flex-col min-w-0 w-full md:pl-64 min-h-screen">
         {% if user.is_authenticated %}
         <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-sm">
             <div class="flex items-center space-x-3">

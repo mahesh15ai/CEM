@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80">
+    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-black text-slate-900">Add Carousel Banner Image</h2>
+            <p class="text-xs text-slate-500">Upload high-quality images for Gathering, Sports & Fests slider.</p>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Banner Title</label>
+            <input type="text" name="title" required placeholder="e.g. Annual Sports Meet 2026" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Badge Text / Tag</label>
+            <input type="text" name="badge_text" placeholder="e.g. Sports Fest, Gathering, Convocation" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Subtitle / Description</label>
+            <textarea name="subtitle" rows="2" placeholder="Brief details about the event..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Upload Image File</label>
+            <input type="file" name="image" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-600 hover:file:bg-brand-100 cursor-pointer">
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3">
+            <a href="{% url 'student_dashboard' %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs transition">Cancel</a>
+            <button type="submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition text-xs">
+                Upload Banner
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
